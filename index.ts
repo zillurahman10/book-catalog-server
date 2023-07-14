@@ -1,3 +1,5 @@
+import { ObjectId } from "mongodb";
+
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const express = require("express");
 const cors = require("cors");
@@ -48,6 +50,18 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     });
+
+    app.get(
+      "/books/:id",
+      async (
+        req: { params: { id: any } },
+        res: { send: (arg0: any) => void }
+      ) => {
+        const id = req.params.id;
+        const result = await booksCollection.findOne(new ObjectId(id));
+        res.send(result);
+      }
+    );
   } finally {
   }
 }
