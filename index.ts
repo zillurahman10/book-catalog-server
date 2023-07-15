@@ -62,6 +62,18 @@ async function run() {
         res.send(result);
       }
     );
+
+    app.post("/books", async (req: { body: any }, res: any) => {
+      console.log(req.body);
+      const result = await booksCollection.insertOne(req.body);
+      res.send(result);
+    });
+
+    app.delete("/books/:id", async (req: { params: { id: any } }, res: any) => {
+      const id = req.params.id;
+      const result = await booksCollection.deleteOne(new ObjectId(id));
+      res.send(result);
+    });
   } finally {
   }
 }
