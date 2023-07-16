@@ -58,6 +58,7 @@ async function run() {
         res: { send: (arg0: any) => void }
       ) => {
         const id = req.params.id;
+        console.log(id);
         const result = await booksCollection.findOne(new ObjectId(id));
         res.send(result);
       }
@@ -69,11 +70,42 @@ async function run() {
       res.send(result);
     });
 
-    app.delete("/books/:id", async (req: { params: { id: any } }, res: any) => {
-      const id = req.params.id;
-      const result = await booksCollection.deleteOne(new ObjectId(id));
+    app.post("/reviews/:id", async (req: any, res: any) => {
+      const bookId = req.params.id;
+      const reviews = req.body.comment;
+
+      console.log(bookId);
+      console.log(reviews);
+
+      const result = await booksCollection.updateOne(
+        { _id: new ObjectId(bookId) },
+        { $push: { reviews: reviews } }
+      );
+
       res.send(result);
     });
+
+    app.get(
+      "/reviews/:id",
+      async (
+        req: { params: { id: any } },
+        res: { send: (arg0: any) => void }
+      ) => {
+        const bookId = req.params.id;
+
+        const result = await booksCollection.findOne(
+          { _id: new ObjectId(bookId) },
+          { projection: { _id: 0, reviews: 1 } }
+        );
+        res.send(result);
+      }
+    );
+
+    // app.delete("/books/:id", async (req: { params: { id: any } }, res: any) => {
+    //   const id = req.params.id;
+    //   const result = await booksCollection.deleteOne(new ObjectId(id));
+    //   res.send(result);
+    // });
   } finally {
   }
 }
